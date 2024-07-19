@@ -1,3 +1,8 @@
 export default function Dashboard() {
-  return <div>Finance Tracker</div>;
+  return (
+    <>
+      <div>Finance Tracker</div>
+      <div>Test</div>
+    </>
+  );
 }
