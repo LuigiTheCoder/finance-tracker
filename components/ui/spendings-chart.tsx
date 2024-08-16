@@ -1,8 +1,13 @@
 "use client";
 
-import { Bar, BarChart } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
-import { ChartConfig, ChartContainer } from "@/components/ui/chart";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 
 const chartData = [
   { month: "January", income: 186, expense: 80 },
@@ -29,6 +34,14 @@ export default function SpendingsChart() {
     <div className="flex justify-center">
       <ChartContainer config={chartConfig} className="max-h-[500px] w-1/2">
         <BarChart accessibilityLayer data={chartData}>
+          <CartesianGrid vertical={false} />
+          <XAxis
+            dataKey="month"
+            tickLine={false}
+            axisLine={false}
+            // tickFormatter={(value) => value.slice(0, 3)}
+          />
+          <ChartTooltip content={<ChartTooltipContent />} />
           <Bar dataKey="income" fill="var(--color-income)" radius={4} />
           <Bar dataKey="expense" fill="var(--color-expense)" radius={4} />
         </BarChart>
