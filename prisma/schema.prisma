@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,20 +10,36 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-model Transaction {
-  id            String      @id @default(cuid())
-  time          DateTime
-  from          BankAccount @relation(fields: [bankAccountId], references: [id])
-  bankAccountId String
+model BankAccount {
+  id       String @id @default(cuid())
+  name     String
+  owner    Person @relation(fields: [personId], references: [id])
+  balance  Float
+  personId String
+
+  outgoingTransactions Transaction[] @relation(name: "FromAccount")
+  incomingTransactions Transaction[] @relation(name: "ToAccount")
 }
 
-model BankAccount {
-  id           String        @id @default(cuid())
-  name         String
-  owner        Person        @relation(fields: [personId], references: [id])
-  currentValue Int
-  Transaction  Transaction[]
-  personId     String
+model TransactionType {
+  id          String        @id @default(cuid())
+  name        String
+  Transaction Transaction[]
+}
+
+model Transaction {
+  id                String          @id @default(cuid())
+  name              String
+  transactionTypeId String
+  type              TransactionType @relation(fields: [transactionTypeId], references: [id])
+  amount            Float
+  time              DateTime
+  fromBankAccountId String
+  toBankAccountId   String?
+  fromAccount       BankAccount     @relation(name: "FromAccount", fields: [fromBankAccountId], references: [id])
+  toAccount         BankAccount?    @relation(name: "ToAccount", fields: [toBankAccountId], references: [id])
+  budgets           Budget[]
+  notes             String
 }
 
 model Person {
@@ -35,4 +48,12 @@ model Person {
   lastName    String
   eMail       String
   BankAccount BankAccount[]
+}
+
+model Budget {
+  id               String @id @default(cuid())
+  name             String
+  monthlyAllowance Float
+
+  Transactions Transaction[]
 }
